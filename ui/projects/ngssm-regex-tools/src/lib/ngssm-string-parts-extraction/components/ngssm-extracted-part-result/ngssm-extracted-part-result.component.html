@@ -1,0 +1,16 @@
+<div class="flex-row-center fxFlex" *ngIf="(hasResult$ | async) === true">
+    <mat-form-field class="with-margin-right-12">
+        <mat-label>Part name</mat-label>
+        <input matInput readonly [formControl]="nameControl">
+    </mat-form-field>
+
+    <div class="flex-row-center ngssm-success" *ngIf="(error$ | async) === undefined">
+        <i class="fa-solid fa-check  with-margin-right-12"></i>
+        {{extractedItem$ | async}}
+    </div>
+
+    <div class="flex-row-center ngssm-error" *ngIf="(error$ | async) !== undefined">
+        <i class="fa-solid fa-xmark  with-margin-right-12"></i>
+        {{error$ | async}}
+    </div>
+</div>

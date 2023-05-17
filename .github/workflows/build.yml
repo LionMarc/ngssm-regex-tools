@@ -1,0 +1,13 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  call_shared_build:
+    uses: ./.github/workflows/shared_build.yml
+    with:
+      angular_package_version: "0.0.0"

@@ -1,0 +1,30 @@
+<mat-form-field class="regex-control" cdkOverlayOrigin #trigger="cdkOverlayOrigin" #element id="expressionControl">
+    <mat-label>
+        <ng-content></ng-content>
+    </mat-label>
+    <input matInput [formControl]="valueControl" [required]="required">
+    <button matSuffix mat-icon-button (click)="$event.stopPropagation(); toggleTestingControlVisibility()"
+        [disabled]="valueControl.disabled" id="toggleButton"
+        [matTooltip]="(testingControlOpen$ | async) === false ? 'Open panel to enter a string to be used to check the regular expression.' : 'Close panel'">
+        <mat-icon class="fa-solid"
+            [ngClass]="{'fa-angles-up': (testingControlOpen$ | async) === true, 'fa-angles-down': (testingControlOpen$ | async) === false}">
+        </mat-icon>
+    </button>
+    <mat-error *ngIf="valueControl.errors?.['regex']">
+        {{valueControl.errors?.['regex']}}
+    </mat-error>
+</mat-form-field>
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="(testingControlOpen$ | async) === true">
+    <div class="ngssm-regex-testing-container"
+        [style.width.px]="elementRef.nativeElement.getBoundingClientRect().width">
+        <mat-form-field>
+            <mat-label>Enter a string to test regular expression</mat-label>
+            <input matInput [formControl]="testingStringControl">
+            <mat-icon matSuffix class="fa-solid"
+                [ngClass]="{'fa-check ngssm-success': (isMatch$ | async) === true, 'fa-xmark ngssm-error': (isMatch$ | async) === false}">
+            </mat-icon>
+        </mat-form-field>
+    </div>
+</ng-template>

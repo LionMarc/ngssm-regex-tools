@@ -1,0 +1,52 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        required: true
+        type: string
+        description: Minor.Patch, Major is set according to targetted .NET or angular version
+  release:
+    types: [published]
+
+jobs:
+  setup_env:
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.setup_version.outputs.VERSION }}
+    steps:
+      - name: setup_version
+        id: setup_version
+        run: |
+          if [[ "${{ inputs.package_version }}" != "" ]] 
+          then 
+            echo "VERSION=${{ inputs.package_version }}" 
+          else 
+            echo "VERSION=${{ github.event.release.tag_name }}"
+          fi >> $GITHUB_OUTPUT
+      
+  call_shared_build:
+    needs: setup_env
+    uses: ./.github/workflows/shared_build.yml
+    with:
+      angular_package_version: ${{ needs.setup_env.outputs.release_version }}
+
+  publish_angular:
+    name: Publish angular package
+    needs: call_shared_build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ngssm-regex-tools
+          path: ./angular-packages
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: cd ./angular-packages && npm publish *.tgz
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+

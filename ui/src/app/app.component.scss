@@ -1,0 +1,12 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .string-parts-extractor-demo,
+    .regex-demo {
+        margin: 10px;
+        height: 400px;
+        width: 600px;
+    }
+}
