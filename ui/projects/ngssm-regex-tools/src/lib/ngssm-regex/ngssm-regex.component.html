@@ -1,4 +1,5 @@
-<mat-form-field class="regex-control" cdkOverlayOrigin #trigger="cdkOverlayOrigin" #element id="expressionControl">
+<mat-form-field class="ngssm-regex-control" cdkOverlayOrigin #trigger="cdkOverlayOrigin" #element id="expressionControl"
+    [ngClass]="{'ngssm-regex-open' : (testingControlOpen$ | async) === true}">
     <mat-label>
         <ng-content></ng-content>
     </mat-label>
@@ -18,7 +19,7 @@
 <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="(testingControlOpen$ | async) === true">
     <div class="ngssm-regex-testing-container"
-        [style.width.px]="elementRef.nativeElement.getBoundingClientRect().width">
+        [style.width.px]="elementRef.nativeElement.getBoundingClientRect().width - 6">
         <mat-form-field>
             <mat-label>Enter a string to test regular expression</mat-label>
             <input matInput [formControl]="testingStringControl">
