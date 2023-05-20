@@ -1,7 +1,46 @@
+:root {
+    --ngssm-regex-control-border-color: #b7bcbf;
+}
+
 .ngssm-success {
     color: green;
 }
 
 .ngssm-error {
     color: red;
+}
+
+.ngssm-regex-control {
+    flex: 1;
+
+    .toggle-button:hover {
+        cursor: pointer;
+    }
+}
+
+.ngssm-regex-control.ngssm-regex-open {
+    padding: 4px 2px 0px 2px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-right: 1px solid var(--ngssm-regex-control-border-color);
+    border-left: 1px solid var(--ngssm-regex-control-border-color);
+    border-top: 1px solid var(--ngssm-regex-control-border-color);
+}
+
+.ngssm-regex-testing-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #fff;
+
+    padding: 0px 2px 4px 2px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-right: 1px solid var(--ngssm-regex-control-border-color);
+    border-left: 1px solid var(--ngssm-regex-control-border-color);
+    border-bottom: 1px solid var(--ngssm-regex-control-border-color);
+
+    mat-form-field {
+        flex: 1;
+    }
 }
