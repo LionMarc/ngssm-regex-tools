@@ -1,5 +1,6 @@
 :root {
     --ngssm-regex-control-border-color: #b7bcbf;
+    --ngssm-regex-control-testing-container-background: aliceblue
 }
 
 .ngssm-success {
@@ -18,29 +19,10 @@
     }
 }
 
-.ngssm-regex-control.ngssm-regex-open {
-    padding: 4px 2px 0px 2px;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    border-right: 1px solid var(--ngssm-regex-control-border-color);
-    border-left: 1px solid var(--ngssm-regex-control-border-color);
-    border-top: 1px solid var(--ngssm-regex-control-border-color);
-}
-
 .ngssm-regex-testing-container {
+    background: var(--ngssm-regex-control-testing-container-background);
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    background: #fff;
-
-    padding: 0px 2px 4px 2px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    border-right: 1px solid var(--ngssm-regex-control-border-color);
-    border-left: 1px solid var(--ngssm-regex-control-border-color);
-    border-bottom: 1px solid var(--ngssm-regex-control-border-color);
-
-    mat-form-field {
-        flex: 1;
-    }
+    flex-direction: column;
+    padding: 4px;
+    padding-top: 24px;
 }
