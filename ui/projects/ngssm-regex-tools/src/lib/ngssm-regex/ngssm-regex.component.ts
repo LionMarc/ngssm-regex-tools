@@ -14,7 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatIconModule } from '@angular/material/icon';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { ConnectionPositionPair, OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, Observable, debounceTime, takeUntil } from 'rxjs';
@@ -70,6 +70,21 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
 
   public readonly valueControl = new FormControl<string | null | undefined>(null);
   public readonly testingStringControl = new FormControl<string>('');
+
+  public readonly overlayPositions: ConnectionPositionPair[] = [
+    new ConnectionPositionPair(
+      {
+        originX: 'end',
+        originY: 'bottom'
+      },
+      {
+        overlayX: 'end',
+        overlayY: 'top'
+      },
+      0,
+      0
+    )
+  ];
 
   constructor(
     store: Store,
