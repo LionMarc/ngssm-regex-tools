@@ -1,6 +1,6 @@
-import { Injectable, Provider } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { Reducer, State, Action, NGSSM_REDUCER } from 'ngssm-store';
+import { Reducer, State, Action } from 'ngssm-store';
 
 import {
   EditStringPartsExtractorAction,
@@ -141,9 +141,3 @@ export class StringPartsExtractorEditorReducer implements Reducer {
     return updatedState;
   }
 }
-
-export const stringPartsExtractorEditorReducerProvider: Provider = {
-  provide: NGSSM_REDUCER,
-  useClass: StringPartsExtractorEditorReducer,
-  multi: true
-};

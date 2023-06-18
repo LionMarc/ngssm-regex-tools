@@ -1,6 +1,6 @@
-import { Injectable, Provider } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { Effect, Store, State, Action, NGSSM_EFFECT } from 'ngssm-store';
+import { Effect, Store, State, Action } from 'ngssm-store';
 
 import { NgssmStringPartsExtractionActionType, RegisterStringPartsExtractionResultAction } from '../actions';
 import { RegexToolsService } from '../services';
@@ -44,9 +44,3 @@ export class StringPartsExtractionEffect implements Effect {
     }
   }
 }
-
-export const stringPartsExtractionEffectProvider: Provider = {
-  provide: NGSSM_EFFECT,
-  useClass: StringPartsExtractionEffect,
-  multi: true
-};

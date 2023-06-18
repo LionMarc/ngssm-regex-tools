@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { StoreMock } from 'ngssm-store';
+import { StoreMock } from 'ngssm-store/testing';
 
 import { NgssmStringPartsExtractionActionType } from '../actions';
 import { RegexToolsService } from '../services';

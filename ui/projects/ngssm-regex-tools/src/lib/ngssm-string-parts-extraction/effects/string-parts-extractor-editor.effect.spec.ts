@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { StoreMock } from 'ngssm-store';
+import { StoreMock } from 'ngssm-store/testing';
 
 import { NgssmStringPartsExtractionActionType } from '../actions';
 import { StringPartsExtractorEditorEffect } from './string-parts-extractor-editor.effect';

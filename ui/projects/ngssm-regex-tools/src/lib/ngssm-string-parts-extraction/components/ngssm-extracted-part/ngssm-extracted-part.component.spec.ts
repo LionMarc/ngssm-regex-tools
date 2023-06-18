@@ -7,7 +7,8 @@ import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { By } from '@angular/platform-browser';
 
 import { ExtractedPartType, getDefaultNgssmRegexToolsDateFormats } from 'ngssm-regex-tools';
-import { Store, StoreMock } from 'ngssm-store';
+import { Store } from 'ngssm-store';
+import { StoreMock } from 'ngssm-store/testing';
 
 import { NgssmStringPartsExtractionStateSpecification, updateNgssmStringPartsExtractionState } from '../../state';
 import { NgssmExtractedPartComponent } from './ngssm-extracted-part.component';
@@ -68,7 +69,7 @@ describe('NgssmExtractedPartComponent', () => {
       defaultInitialization();
 
       beforeEach(async () => {
-        const state = updateNgssmStringPartsExtractionState(store.state$.getValue(), {
+        const state = updateNgssmStringPartsExtractionState(store.stateValue, {
           stringPartsExtractorEditor: {
             parts: {
               $set: [
@@ -81,7 +82,7 @@ describe('NgssmExtractedPartComponent', () => {
             }
           }
         });
-        store.state$.next(state);
+        store.stateValue = state;
         component.partName = 'date';
         fixture.detectChanges();
         await fixture.whenStable();
@@ -121,7 +122,7 @@ describe('NgssmExtractedPartComponent', () => {
       withCustomFormats();
 
       beforeEach(async () => {
-        const state = updateNgssmStringPartsExtractionState(store.state$.getValue(), {
+        const state = updateNgssmStringPartsExtractionState(store.stateValue, {
           stringPartsExtractorEditor: {
             parts: {
               $set: [
@@ -134,7 +135,7 @@ describe('NgssmExtractedPartComponent', () => {
             }
           }
         });
-        store.state$.next(state);
+        store.stateValue = state;
         component.partName = 'date';
         fixture.detectChanges();
         await fixture.whenStable();
