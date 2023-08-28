@@ -40,7 +40,10 @@ export class NgssmStringPartsExtractorComponent
   public autofilled?: boolean | undefined;
   public userAriaDescribedBy?: string | undefined;
 
-  constructor(store: Store, @Optional() @Self() public ngControl: NgControl) {
+  constructor(
+    store: Store,
+    @Optional() @Self() public ngControl: NgControl
+  ) {
     super(store);
 
     // Replace the provider from above with this.
