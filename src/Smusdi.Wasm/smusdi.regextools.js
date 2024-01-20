@@ -1,5 +1,5 @@
 // Set up the .NET WebAssembly runtime
-import { dotnet } from './dotnet.js'
+import { dotnet } from './_framework/dotnet.js'
 
 // Get exported methods from the .NET assembly
 const { getAssemblyExports, getConfig } = await dotnet
