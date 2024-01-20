@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     - name: Install wasm tools
       run: dotnet workload install wasm-tools
     - name: Restore dependencies
@@ -34,11 +34,11 @@ jobs:
     - name: Cleanup wasm
       run: rm -rf src/Smusdi.Wasm/bin && rm -rf src/Smusdi.Wasm/obj
     - name: Building wasm
-      run: dotnet publish src/Smusdi.Wasm/Smusdi.Wasm.csproj --configuration Release -p:Version=7.${{ inputs.angular_package_version }}
+      run: dotnet publish src/Smusdi.Wasm/Smusdi.Wasm.csproj --configuration Release -p:Version=${{ inputs.angular_package_version }}
     - uses: actions/upload-artifact@v3
       with:
         name: smusdi-wasm
-        path: src/Smusdi.Wasm/bin/Release/net7.0/browser-wasm/AppBundle
+        path: src/Smusdi.Wasm/bin/Release/net8.0/browser-wasm/AppBundle
         retention-days: 2
   
   build_angular:
@@ -56,7 +56,7 @@ jobs:
     - run: ls -lrt ui/projects/ngssm-regex-tools/assets
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.x'
+        node-version: '20.x'
         cache: 'npm'
         cache-dependency-path: 'ui/package-lock.json'
     - run: cd ui && npm ci
