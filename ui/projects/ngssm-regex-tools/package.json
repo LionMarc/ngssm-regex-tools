@@ -15,7 +15,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/LionMarc/smusdi-regex-tools",
+    "url": "https://github.com/LionMarc/ngssm-regex-tools",
     "directory": "ui/projects/ngssm-regex-tools"
   }
 }

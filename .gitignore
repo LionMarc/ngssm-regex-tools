@@ -39,3 +39,4 @@ packages/
 /publish/
 /ui/tests-results/
 /ui/src/assets/smusdi-7/
+/ui/.nx/
