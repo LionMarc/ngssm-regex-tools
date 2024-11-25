@@ -12,20 +12,20 @@ import { ConsoleAppender, NgSsmComponent, Store } from 'ngssm-store';
 import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExtractor } from 'ngssm-regex-tools';
 
 @Component({
-    selector: 'app-root',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatToolbarModule,
-        MatFormFieldModule,
-        MatCardModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        NgssmStringPartsExtractorComponent,
-        NgssmRegexComponent
-    ],
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+  selector: 'app-root',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    NgssmStringPartsExtractorComponent,
+    NgssmRegexComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent extends NgSsmComponent {
   private readonly _regexRequired$ = new BehaviorSubject<boolean>(false);

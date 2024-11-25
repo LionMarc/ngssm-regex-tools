@@ -10,11 +10,11 @@ import { NgSsmComponent, Store } from 'ngssm-store';
 import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
-    selector: 'ngssm-extracted-part-result',
-    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
-    templateUrl: './ngssm-extracted-part-result.component.html',
-    styleUrls: ['./ngssm-extracted-part-result.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'ngssm-extracted-part-result',
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  templateUrl: './ngssm-extracted-part-result.component.html',
+  styleUrls: ['./ngssm-extracted-part-result.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgssmExtractedPartResultComponent extends NgSsmComponent {
   private readonly _hasResult$ = new BehaviorSubject<boolean>(false);

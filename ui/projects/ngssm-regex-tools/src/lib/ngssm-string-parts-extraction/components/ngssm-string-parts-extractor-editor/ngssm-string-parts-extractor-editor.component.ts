@@ -17,21 +17,21 @@ import { NgssmExtractedPartResultComponent } from '../ngssm-extracted-part-resul
 import { NGSSM_REGEX_TOOLS_CONFIG, NgssmRegexToolsConfig, getDefaultNgssmRegexToolsConfig } from '../../../ngssm-regex-tools-tools-config';
 
 @Component({
-    selector: 'ngssm-string-parts-extractor-editor',
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatDialogModule,
-        MatFormFieldModule,
-        MatCardModule,
-        MatButtonModule,
-        MatInputModule,
-        NgssmExtractedPartComponent,
-        NgssmExtractedPartResultComponent
-    ],
-    templateUrl: './ngssm-string-parts-extractor-editor.component.html',
-    styleUrls: ['./ngssm-string-parts-extractor-editor.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'ngssm-string-parts-extractor-editor',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatButtonModule,
+    MatInputModule,
+    NgssmExtractedPartComponent,
+    NgssmExtractedPartResultComponent
+  ],
+  templateUrl: './ngssm-string-parts-extractor-editor.component.html',
+  styleUrls: ['./ngssm-string-parts-extractor-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgssmStringPartsExtractorEditorComponent extends NgSsmComponent implements AfterViewInit {
   private readonly _canSubmit$ = new BehaviorSubject<boolean>(false);

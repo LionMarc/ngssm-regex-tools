@@ -12,14 +12,14 @@ import { BehaviorSubject } from 'rxjs';
 import { NgssmRegexComponent } from './ngssm-regex.component';
 
 @Component({
-    selector: 'ngssm-testing',
-    imports: [CommonModule, ReactiveFormsModule, NgssmRegexComponent],
-    template: `
+  selector: 'ngssm-testing',
+  imports: [CommonModule, ReactiveFormsModule, NgssmRegexComponent],
+  template: `
     <ngssm-regex [formControl]="regexControl" [required]="(regexRequired$ | async) ?? false">
       Enter a valid regular expression
     </ngssm-regex>
   `,
-    styles: []
+  styles: []
 })
 export class TestingComponent {
   public readonly regexControl = new FormControl<string | null>(null);
