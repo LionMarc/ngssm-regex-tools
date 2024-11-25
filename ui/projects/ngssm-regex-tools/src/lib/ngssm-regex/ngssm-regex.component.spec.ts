@@ -13,7 +13,6 @@ import { NgssmRegexComponent } from './ngssm-regex.component';
 
 @Component({
   selector: 'ngssm-testing',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NgssmRegexComponent],
   template: `
     <ngssm-regex [formControl]="regexControl" [required]="(regexRequired$ | async) ?? false">

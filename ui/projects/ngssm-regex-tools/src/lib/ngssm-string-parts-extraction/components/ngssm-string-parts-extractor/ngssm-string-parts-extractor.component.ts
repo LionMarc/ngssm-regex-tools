@@ -12,7 +12,6 @@ import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
   selector: 'ngssm-string-parts-extractor',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './ngssm-string-parts-extractor.component.html',
   styleUrls: ['./ngssm-string-parts-extractor.component.scss'],

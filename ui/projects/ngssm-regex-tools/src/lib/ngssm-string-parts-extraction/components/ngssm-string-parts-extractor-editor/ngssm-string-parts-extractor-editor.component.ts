@@ -18,7 +18,6 @@ import { NGSSM_REGEX_TOOLS_CONFIG, NgssmRegexToolsConfig, getDefaultNgssmRegexTo
 
 @Component({
   selector: 'ngssm-string-parts-extractor-editor',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

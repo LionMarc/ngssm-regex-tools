@@ -11,7 +11,6 @@ import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
   selector: 'ngssm-extracted-part-result',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
   templateUrl: './ngssm-extracted-part-result.component.html',
   styleUrls: ['./ngssm-extracted-part-result.component.scss'],

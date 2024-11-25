@@ -30,7 +30,6 @@ export const noop = () => {
 
 @Component({
   selector: 'ngssm-regex',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

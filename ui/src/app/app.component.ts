@@ -13,7 +13,6 @@ import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExt
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

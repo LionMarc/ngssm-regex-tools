@@ -20,7 +20,6 @@ import { UpdateExtractedPartAction } from '../../actions';
 
 @Component({
   selector: 'ngssm-extracted-part',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule],
   templateUrl: './ngssm-extracted-part.component.html',
   styleUrls: ['./ngssm-extracted-part.component.scss'],
