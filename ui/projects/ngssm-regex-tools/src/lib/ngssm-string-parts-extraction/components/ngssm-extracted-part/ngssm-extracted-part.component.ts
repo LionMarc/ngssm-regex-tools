@@ -19,12 +19,11 @@ import {
 import { UpdateExtractedPartAction } from '../../actions';
 
 @Component({
-  selector: 'ngssm-extracted-part',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule],
-  templateUrl: './ngssm-extracted-part.component.html',
-  styleUrls: ['./ngssm-extracted-part.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'ngssm-extracted-part',
+    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule],
+    templateUrl: './ngssm-extracted-part.component.html',
+    styleUrls: ['./ngssm-extracted-part.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgssmExtractedPartComponent extends NgSsmComponent {
   private readonly _filteredFormats$ = new BehaviorSubject<string[]>([]);

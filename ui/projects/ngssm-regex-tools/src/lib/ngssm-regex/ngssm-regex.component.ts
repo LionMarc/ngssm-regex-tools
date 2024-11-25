@@ -29,33 +29,32 @@ export const noop = () => {
 };
 
 @Component({
-  selector: 'ngssm-regex',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    OverlayModule
-  ],
-  templateUrl: './ngssm-regex.component.html',
-  styleUrls: ['./ngssm-regex.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: NgssmRegexComponent
-    },
-    {
-      provide: NG_VALIDATORS,
-      multi: true,
-      useExisting: NgssmRegexComponent
-    }
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'ngssm-regex',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        OverlayModule
+    ],
+    templateUrl: './ngssm-regex.component.html',
+    styleUrls: ['./ngssm-regex.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: NgssmRegexComponent
+        },
+        {
+            provide: NG_VALIDATORS,
+            multi: true,
+            useExisting: NgssmRegexComponent
+        }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgssmRegexComponent extends NgSsmComponent implements ControlValueAccessor, Validator {
   private readonly _testingControlOpen$ = new BehaviorSubject<boolean>(false);

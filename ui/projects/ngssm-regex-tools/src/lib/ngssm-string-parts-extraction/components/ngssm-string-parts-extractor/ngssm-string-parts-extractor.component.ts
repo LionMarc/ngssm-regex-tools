@@ -11,13 +11,12 @@ import { EditStringPartsExtractorAction } from '../../actions';
 import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
-  selector: 'ngssm-string-parts-extractor',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './ngssm-string-parts-extractor.component.html',
-  styleUrls: ['./ngssm-string-parts-extractor.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: MatFormFieldControl, useExisting: NgssmStringPartsExtractorComponent }]
+    selector: 'ngssm-string-parts-extractor',
+    imports: [CommonModule],
+    templateUrl: './ngssm-string-parts-extractor.component.html',
+    styleUrls: ['./ngssm-string-parts-extractor.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [{ provide: MatFormFieldControl, useExisting: NgssmStringPartsExtractorComponent }]
 })
 export class NgssmStringPartsExtractorComponent
   extends NgSsmComponent
