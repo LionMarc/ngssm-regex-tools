@@ -28,8 +28,8 @@
     "@fortawesome/fontawesome-free": "^6.7.1",
     "immutability-helper": "^3.1.1",
     "luxon": "^3.5.0",
-    "ngssm-store": "^18.2.2",
-    "ngssm-toolkit": "^18.2.2",
+    "ngssm-store": "^19.0.0",
+    "ngssm-toolkit": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
@@ -60,9 +60,9 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "karma-junit-reporter": "^2.0.1",
     "ng-packagr": "^19.0.1",
-    "ngssm-schematics": "^18.2.2",
+    "ngssm-schematics": "^19.0.0",
     "prettier": "^3.3.3",
     "prettier-eslint": "^16.3.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.6.3"
   }
 }
