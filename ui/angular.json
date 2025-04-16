@@ -136,7 +136,8 @@
             "lintFilePatterns": [
               "src/**/*.ts",
               "src/**/*.html"
-            ]
+            ],
+            "eslintConfig": "./eslint.config.js"
           }
         }
       }
@@ -194,7 +195,8 @@
             "lintFilePatterns": [
               "projects/ngssm-regex-tools/**/*.ts",
               "projects/ngssm-regex-tools/**/*.html"
-            ]
+            ],
+            "eslintConfig": "projects/ngssm-regex-tools/eslint.config.js"
           }
         }
       }
