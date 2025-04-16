@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Action } from 'ngssm-store';
+import { Action, State } from 'ngssm-store';
 
 import {
   EditStringPartsExtractorAction,
@@ -18,7 +18,7 @@ import { StringPartsExtractorEditorReducer } from './string-parts-extractor-edit
 
 describe('StringPartsExtractorEditorReducer', () => {
   let reducer: StringPartsExtractorEditorReducer;
-  let state: { [key: string]: object };
+  let state: State;
   let regexToolsService: RegexToolsService;
 
   beforeEach(() => {

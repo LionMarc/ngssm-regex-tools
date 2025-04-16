@@ -1,9 +1,10 @@
+import { State } from 'ngssm-store';
 import { NgssmStringPartsExtractionActionType } from '../actions';
 import { StringPartsExtractorTestingReducer } from './string-parts-extractor-testing.reducer';
 
 describe('StringPartsExtractorTestingReducer', () => {
   let reducer: StringPartsExtractorTestingReducer;
-  let state: { [key: string]: object };
+  let state: State;
 
   beforeEach(() => {
     reducer = new StringPartsExtractorTestingReducer();

@@ -12,7 +12,7 @@ import { ConsoleAppender, NgSsmComponent, Store } from 'ngssm-store';
 import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExtractor } from 'ngssm-regex-tools';
 
 @Component({
-  selector: 'app-root',
+  selector: 'ngssm-root',
   imports: [
     CommonModule,
     ReactiveFormsModule,
