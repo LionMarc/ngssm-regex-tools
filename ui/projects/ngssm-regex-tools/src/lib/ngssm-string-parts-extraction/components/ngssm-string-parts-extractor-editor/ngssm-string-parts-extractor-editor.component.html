@@ -1,52 +1,54 @@
 <h1 mat-dialog-title>String parts extractor</h1>
 <mat-dialog-content class="flex-row-stretch fxFlex">
-    <mat-card class="flex-column-stretch sub-card fxFlex">
-        <mat-card-header>
-            <mat-card-title>
-                Extractor settings
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="flex-column-stretch fxFlex">
-            <mat-form-field>
-                <mat-label>Enter the regular expression</mat-label>
-                <input matInput [formControl]="expressionControl">
-                <mat-error *ngIf="expressionControl.invalid && expressionControl.errors?.['regex']">
-                    {{expressionControl.errors?.['regex']}}
-                </mat-error>
-            </mat-form-field>
-            <mat-card class="flex-column-stretch fxFlex parts-container">
-                <ngssm-extracted-part *ngFor="let part of extractedPartNames$ | async;" [partName]="part">
-                </ngssm-extracted-part>
-            </mat-card>
-        </mat-card-content>
-    </mat-card>
-    <mat-card class="flex-column-stretch sub-card fxFlex">
-        <mat-card-header>
-            <mat-card-title>
-                Extractor testing
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="flex-column-stretch fxFlex">
-            <div class="flex-row-center">
-                <mat-form-field class="fxFlex">
-                    <mat-label>Enter a test string</mat-label>
-                    <input matInput [formControl]="testingStringControl">
-                </mat-form-field>
-                <i class="fa-solid fa-check ngssm-success with-margin-left-12" *ngIf="(isValid$ | async) === true"></i>
-                <i class="fa-solid fa-xmark ngssm-error with-margin-left-12" *ngIf="(isValid$ | async) === false"></i>
-            </div>
+  <mat-card class="flex-column-stretch sub-card fxFlex">
+    <mat-card-header>
+      <mat-card-title> Extractor settings </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex-column-stretch fxFlex">
+      <mat-form-field>
+        <mat-label>Enter the regular expression</mat-label>
+        <input matInput [formControl]="expressionControl" />
 
-            <mat-card class="flex-column-stretch fxFlex parts-container">
-                <ngssm-extracted-part-result *ngFor="let part of extractedPartNames$ | async;" [partName]="part">
-                </ngssm-extracted-part-result>
-            </mat-card>
-        </mat-card-content>
-    </mat-card>
+        @if (expressionControl.invalid && expressionControl.errors?.['regex']) {
+          <mat-error>
+            {{ expressionControl.errors?.['regex'] }}
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-card class="flex-column-stretch fxFlex parts-container">
+        @for (part of extractedPartNames$ | async; track part) {
+          <ngssm-extracted-part [partName]="part"> </ngssm-extracted-part>
+        }
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="flex-column-stretch sub-card fxFlex">
+    <mat-card-header>
+      <mat-card-title> Extractor testing </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex-column-stretch fxFlex">
+      <div class="flex-row-center">
+        <mat-form-field class="fxFlex">
+          <mat-label>Enter a test string</mat-label>
+          <input matInput [formControl]="testingStringControl" />
+        </mat-form-field>
+        @if ((isValid$ | async) === true) {
+          <i class="fa-solid fa-check ngssm-success with-margin-left-12"></i>
+        } @else {
+          <i class="fa-solid fa-xmark ngssm-error with-margin-left-12"></i>
+        }
+      </div>
+
+      <mat-card class="flex-column-stretch fxFlex parts-container">
+        @for (part of extractedPartNames$ | async; track part) {
+          <ngssm-extracted-part-result [partName]="part"> </ngssm-extracted-part-result>
+        }
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
 </mat-dialog-content>
 <mat-dialog-actions class="flex-row-center">
-    <span class="fxFlex"></span>
-    <button mat-button (click)="close()">Cancel</button>
-    <button mat-stroked-button color="primary" [disabled]="(canSubmit$ | async) === false" (click)="submit()">
-        Submit
-    </button>
+  <span class="fxFlex"></span>
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-stroked-button color="primary" [disabled]="(canSubmit$ | async) === false" (click)="submit()">Submit</button>
 </mat-dialog-actions>
