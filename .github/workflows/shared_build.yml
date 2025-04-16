@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - name: Install wasm tools
@@ -35,7 +35,7 @@ jobs:
       run: rm -rf src/Smusdi.Wasm/bin && rm -rf src/Smusdi.Wasm/obj
     - name: Building wasm
       run: dotnet publish src/Smusdi.Wasm/Smusdi.Wasm.csproj --configuration Release -p:Version=${{ inputs.angular_package_version }}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: smusdi-wasm
         path: src/Smusdi.Wasm/bin/Release/net8.0/browser-wasm/AppBundle
@@ -48,8 +48,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v3
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
       with:
         name: smusdi-wasm
         path: ui/projects/ngssm-regex-tools/assets
@@ -68,7 +68,7 @@ jobs:
         cd ui/dist/ngssm-regex-tools
         npm version ${{ inputs.angular_package_version }}
         npm pack
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: ngssm-regex-tools
         path: ui/dist/ngssm-regex-tools/ngssm-regex-tools-${{ inputs.angular_package_version }}.tgz
