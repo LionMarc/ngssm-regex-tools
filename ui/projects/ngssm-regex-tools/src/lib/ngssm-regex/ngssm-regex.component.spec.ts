@@ -1,29 +1,26 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatFormFieldHarness } from '@angular/material/form-field/testing';
-import { BehaviorSubject } from 'rxjs';
 
 import { NgssmRegexComponent } from './ngssm-regex.component';
+import { RegexValidationResult } from '../ngssm-string-parts-extraction/model';
+import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
 
 @Component({
   selector: 'ngssm-testing',
   imports: [CommonModule, ReactiveFormsModule, NgssmRegexComponent],
-  template: `
-    <ngssm-regex [formControl]="regexControl" [required]="(regexRequired$ | async) ?? false">
-      Enter a valid regular expression
-    </ngssm-regex>
-  `,
+  template: ` <ngssm-regex [formControl]="regexControl" [required]="regexRequired()"> Enter a valid regular expression </ngssm-regex> `,
   styles: []
 })
 export class TestingComponent {
   public readonly regexControl = new FormControl<string | null>(null);
-  public readonly regexRequired$ = new BehaviorSubject<boolean>(false);
+  public readonly regexRequired = signal<boolean>(false);
 }
 
 describe('NgssmRegexComponent', () => {
@@ -31,9 +28,10 @@ describe('NgssmRegexComponent', () => {
   let fixture: ComponentFixture<TestingComponent>;
   let loader: HarnessLoader;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [TestingComponent, NoopAnimationsModule],
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [TestingComponent],
+      providers: [provideNoopAnimations()],
       teardown: { destroyAfterEach: false }
     }).compileComponents();
 
@@ -41,6 +39,12 @@ describe('NgssmRegexComponent', () => {
     component = fixture.componentInstance;
     fixture.nativeElement.style['min-height'] = '200px';
     loader = TestbedHarnessEnvironment.loader(fixture);
+    const regexToolsService = TestBed.inject(RegexToolsService);
+    spyOn(regexToolsService, 'validateRegex').and.callFake(() => {
+      // Mock implementation: returns valid for any input
+      return { isValid: true } as RegexValidationResult;
+    });
+
     fixture.detectChanges();
   });
 

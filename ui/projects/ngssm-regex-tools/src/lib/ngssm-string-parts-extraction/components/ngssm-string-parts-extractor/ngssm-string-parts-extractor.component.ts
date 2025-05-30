@@ -1,12 +1,12 @@
-import { Component, ChangeDetectionStrategy, Optional, Self, Input, HostBinding } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, effect, input, booleanAttribute, signal, computed, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { NgSsmComponent, Store } from 'ngssm-store';
-import { MatFormFieldControl } from '@angular/material/form-field';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { BehaviorSubject, combineLatest, noop, Observable, Subject } from 'rxjs';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { noop, Subject } from 'rxjs';
+
+import { createSignal, Store } from 'ngssm-store';
+
 import { StringPartsExtractor } from '../../model';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { EditStringPartsExtractorAction } from '../../actions';
 import { selectNgssmStringPartsExtractionState } from '../../state';
 
@@ -16,21 +16,39 @@ import { selectNgssmStringPartsExtractionState } from '../../state';
   templateUrl: './ngssm-string-parts-extractor.component.html',
   styleUrls: ['./ngssm-string-parts-extractor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: MatFormFieldControl, useExisting: NgssmStringPartsExtractorComponent }]
+  providers: [{ provide: MatFormFieldControl, useExisting: NgssmStringPartsExtractorComponent }],
+  host: {
+    '[id]': 'id'
+  }
 })
-export class NgssmStringPartsExtractorComponent
-  extends NgSsmComponent
-  implements MatFormFieldControl<StringPartsExtractor>, ControlValueAccessor
-{
+export class NgssmStringPartsExtractorComponent implements MatFormFieldControl<StringPartsExtractor>, ControlValueAccessor {
   private static nextId = 0;
-  private readonly _expression$ = new BehaviorSubject<string | undefined>(undefined);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private onChangeCallback: (_: any) => void = noop;
-  private _required = false;
-  private _disabled = false;
+  private readonly store = inject(Store);
 
-  @HostBinding('id') public id = `parts-extractor-${NgssmStringPartsExtractorComponent.nextId++}`;
+  private readonly controlId = createSignal((state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.controlId);
+  private readonly extractor = createSignal((state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.extractor);
+  private readonly disabledByCva = signal(false);
+  private readonly disabledSignal = computed(() => this.disabledInput() || this.disabledByCva());
+
+  private onChangeCallback: (_: unknown) => void = noop;
+
+  public ngControl = inject(NgControl, { optional: true, self: true });
+
+  public readonly requiredSignal = input<boolean, unknown>(false, {
+    // eslint-disable-next-line @angular-eslint/no-input-rename
+    alias: 'required',
+    transform: booleanAttribute
+  });
+  public readonly disabledInput = input<boolean, unknown>(false, {
+    // eslint-disable-next-line @angular-eslint/no-input-rename
+    alias: 'disabled',
+    transform: booleanAttribute
+  });
+
+  public readonly expression = signal<string | undefined>(undefined);
+
+  public id = `parts-extractor-${NgssmStringPartsExtractorComponent.nextId++}`;
   public controlType = 'ngssm-string-parts-extractor';
   public placeholder = '';
   public focused = false;
@@ -39,12 +57,7 @@ export class NgssmStringPartsExtractorComponent
   public autofilled?: boolean | undefined;
   public userAriaDescribedBy?: string | undefined;
 
-  constructor(
-    store: Store,
-    @Optional() @Self() public ngControl: NgControl
-  ) {
-    super(store);
-
+  constructor() {
     // Replace the provider from above with this.
     if (this.ngControl != null) {
       // Setting the value accessor directly (instead of using
@@ -52,13 +65,21 @@ export class NgssmStringPartsExtractorComponent
       this.ngControl.valueAccessor = this;
     }
 
-    combineLatest([
-      this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.controlId),
-      this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.extractor)
-    ]).subscribe((values) => {
-      if (values[0] === this.id && values[1]) {
-        this.updateValue(values[1]);
+    effect(() => {
+      const id = this.controlId();
+      const extractor = this.extractor();
+      if (id === this.id && extractor) {
+        this.updateValue(extractor);
       }
+    });
+
+    effect(() => {
+      // To trigger the effect
+      this.requiredSignal();
+      this.disabledSignal();
+
+      // Propagate state changes.
+      untracked(() => this.stateChanges.next());
     });
   }
 
@@ -70,32 +91,16 @@ export class NgssmStringPartsExtractorComponent
     return this.value !== null;
   }
 
-  @Input()
   public get required(): boolean {
-    return this._required;
+    return this.requiredSignal();
   }
 
-  public set required(value: boolean) {
-    this._required = coerceBooleanProperty(value);
-    this.stateChanges.next();
-  }
-
-  @Input()
   public get disabled(): boolean {
-    return this._disabled;
-  }
-
-  public set disabled(value: boolean) {
-    this._disabled = coerceBooleanProperty(value);
-    this.stateChanges.next();
+    return this.disabledSignal();
   }
 
   public get errorState(): boolean {
     return this.ngControl?.invalid ?? false;
-  }
-
-  public get expression$(): Observable<string | undefined> {
-    return this._expression$.asObservable();
   }
 
   public writeValue(obj: StringPartsExtractor | null | undefined): void {
@@ -112,8 +117,8 @@ export class NgssmStringPartsExtractorComponent
     // nothing to do for now.
   }
 
-  public setDisabledState?(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+  public setDisabledState(isDisabled: boolean): void {
+    this.disabledByCva.set(isDisabled);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -123,13 +128,13 @@ export class NgssmStringPartsExtractorComponent
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onContainerClick(event: MouseEvent): void {
-    this.dispatchAction(new EditStringPartsExtractorAction(this.id, this.value ?? undefined));
+    this.store.dispatchAction(new EditStringPartsExtractorAction(this.id, this.value ?? undefined));
   }
 
   private updateValue(extractor: StringPartsExtractor | null): void {
     this.value = extractor;
     this.stateChanges.next();
-    this._expression$.next(this.value?.expression);
+    this.expression.set(this.value?.expression);
     this.onChangeCallback(this.value);
   }
 }

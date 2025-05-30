@@ -1,19 +1,19 @@
-@if ((hasResult$ | async) === true) {
+@if (hasResult()) {
   <div class="flex-row-center fxFlex">
     <mat-form-field class="with-margin-right-12">
       <mat-label>Part name</mat-label>
-      <input matInput readonly [formControl]="nameControl" />
+      <input matInput readonly [ngModel]="partName()" />
     </mat-form-field>
 
-    @if ((error$ | async) === undefined) {
+    @if (error() === undefined) {
       <div class="flex-row-center ngssm-success">
         <i class="fa-solid fa-check with-margin-right-12"></i>
-        {{ extractedItem$ | async }}
+        {{ extractedItem()}}
       </div>
     } @else {
       <div class="flex-row-center ngssm-error">
         <i class="fa-solid fa-xmark with-margin-right-12"></i>
-        {{ error$ | async }}
+        {{ error() }}
       </div>
     }
   </div>

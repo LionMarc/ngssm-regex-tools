@@ -15,7 +15,6 @@ import { NgssmExtractedPartComponent } from './ngssm-extracted-part.component';
 import { NGSSM_REGEX_TOOLS_DATE_FORMATS } from '../../model';
 
 describe('NgssmExtractedPartComponent', () => {
-  let component: NgssmExtractedPartComponent;
   let fixture: ComponentFixture<NgssmExtractedPartComponent>;
   let store: StoreMock;
   let loader: HarnessLoader;
@@ -33,7 +32,6 @@ describe('NgssmExtractedPartComponent', () => {
       }).compileComponents();
 
       fixture = TestBed.createComponent(NgssmExtractedPartComponent);
-      component = fixture.componentInstance;
       fixture.nativeElement.style['min-height'] = '200px';
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
@@ -57,7 +55,6 @@ describe('NgssmExtractedPartComponent', () => {
       }).compileComponents();
 
       fixture = TestBed.createComponent(NgssmExtractedPartComponent);
-      component = fixture.componentInstance;
       fixture.nativeElement.style['min-height'] = '200px';
       loader = TestbedHarnessEnvironment.loader(fixture);
       fixture.detectChanges();
@@ -83,7 +80,7 @@ describe('NgssmExtractedPartComponent', () => {
           }
         });
         store.stateValue = state;
-        component.partName = 'date';
+        fixture.componentRef.setInput('partName', 'date');
         fixture.detectChanges();
         await fixture.whenStable();
       });
@@ -136,7 +133,7 @@ describe('NgssmExtractedPartComponent', () => {
           }
         });
         store.stateValue = state;
-        component.partName = 'date';
+        fixture.componentRef.setInput('partName', 'date');
         fixture.detectChanges();
         await fixture.whenStable();
       });

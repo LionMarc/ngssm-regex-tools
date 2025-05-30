@@ -1,4 +1,14 @@
-import { Component, ChangeDetectionStrategy, Input, ElementRef, Optional, Inject, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ElementRef,
+  ChangeDetectorRef,
+  inject,
+  input,
+  booleanAttribute,
+  signal
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -12,14 +22,11 @@ import {
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatIconModule } from '@angular/material/icon';
 import { ConnectionPositionPair, OverlayModule } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BehaviorSubject, Observable, debounceTime, takeUntil } from 'rxjs';
-
-import { NgSsmComponent, Store } from 'ngssm-store';
+import { debounceTime } from 'rxjs';
 
 import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
 import { NGSSM_REGEX_TOOLS_CONFIG, NgssmRegexToolsConfig, getDefaultNgssmRegexToolsConfig } from '../ngssm-regex-tools-tools-config';
@@ -56,17 +63,24 @@ export const noop = () => {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgssmRegexComponent extends NgSsmComponent implements ControlValueAccessor, Validator {
-  private readonly _testingControlOpen$ = new BehaviorSubject<boolean>(false);
-  private readonly _isMatch$ = new BehaviorSubject<boolean | null>(null);
+export class NgssmRegexComponent implements ControlValueAccessor, Validator {
+  private readonly regexToolsService = inject(RegexToolsService);
+  public readonly elementRef = inject(ElementRef);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly config: NgssmRegexToolsConfig | null = inject(NGSSM_REGEX_TOOLS_CONFIG, { optional: true });
+
   private readonly regexConfig: NgssmRegexToolsConfig;
 
   private onChangeCallback: (_: string | null | undefined) => void = noop;
   private onTouchedCallback: (_: string | null | undefined) => void = noop;
   private onValidationChange: () => void = noop;
-  private _required = false;
   private lastWrite: string | null = null;
 
+  public readonly required = input<boolean, unknown>(false, {
+    transform: booleanAttribute
+  });
+  public readonly testingControlOpen = signal<boolean>(false);
+  public readonly isMatch = signal<boolean | null>(null);
   public readonly valueControl = new FormControl<string | null | undefined>(null);
   public readonly testingStringControl = new FormControl<string>('');
 
@@ -85,19 +99,11 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
     )
   ];
 
-  constructor(
-    store: Store,
-    private regexToolsService: RegexToolsService,
-    public elementRef: ElementRef,
-    private changeDetectorRef: ChangeDetectorRef,
-    @Inject(NGSSM_REGEX_TOOLS_CONFIG) @Optional() config?: NgssmRegexToolsConfig
-  ) {
-    super(store);
-
-    this.regexConfig = config ?? getDefaultNgssmRegexToolsConfig();
+  constructor() {
+    this.regexConfig = this.config ?? getDefaultNgssmRegexToolsConfig();
 
     this.valueControl.valueChanges
-      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntil(this.unsubscribeAll$))
+      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
       .subscribe((value) => {
         if (value !== this.lastWrite) {
           this.onTouchedCallback(value);
@@ -109,26 +115,8 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
       });
 
     this.testingStringControl.valueChanges
-      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntil(this.unsubscribeAll$))
+      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
       .subscribe(() => this.onValidationChange());
-  }
-
-  @Input()
-  public get required(): boolean {
-    return this._required;
-  }
-
-  public set required(value: boolean | string | null) {
-    this._required = coerceBooleanProperty(value);
-    this.onValidationChange();
-  }
-
-  public get testingControlOpen$(): Observable<boolean> {
-    return this._testingControlOpen$.asObservable();
-  }
-
-  public get isMatch$(): Observable<boolean | null> {
-    return this._isMatch$.asObservable();
   }
 
   public writeValue(obj: string | null | undefined): void {
@@ -150,7 +138,7 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
   public setDisabledState(isDisabled: boolean): void {
     if (isDisabled) {
       this.valueControl.disable();
-      if (this._testingControlOpen$.getValue()) {
+      if (this.testingControlOpen()) {
         this.toggleTestingControlVisibility();
       }
     } else {
@@ -160,7 +148,7 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
 
   public validate(control: AbstractControl<string | null | undefined, string | null | undefined>): ValidationErrors | null {
     let error: ValidationErrors | null = null;
-    this._isMatch$.next(null);
+    this.isMatch.set(null);
 
     const value = control.value;
     if (value) {
@@ -173,7 +161,7 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
 
       // check test string only if testing control is open
       const testString = this.testingStringControl.value;
-      if (!error && this._testingControlOpen$.getValue() && testString && testString.length > 0) {
+      if (!error && this.testingControlOpen() && testString && testString.length > 0) {
         const isMatch = this.regexToolsService.isMatch(value, testString);
         if (!isMatch) {
           error = {
@@ -181,9 +169,9 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
           };
         }
 
-        this._isMatch$.next(isMatch);
+        this.isMatch.set(isMatch);
       }
-    } else if (this._required) {
+    } else if (this.required()) {
       error = {
         required: 'Value is required'
       };
@@ -199,7 +187,7 @@ export class NgssmRegexComponent extends NgSsmComponent implements ControlValueA
   }
 
   public toggleTestingControlVisibility(): void {
-    this._testingControlOpen$.next(!this._testingControlOpen$.getValue());
+    this.testingControlOpen.update((v) => !v);
     this.onValidationChange();
   }
 }

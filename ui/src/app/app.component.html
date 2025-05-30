@@ -25,7 +25,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content class="flex-column-stretch fxFlex">
-      <ngssm-regex [formControl]="regexControl" [required]="(regexRequired$ | async) ?? false">
+      <ngssm-regex [formControl]="regexControl" [required]="regexRequired()">
         Enter a valid regular expression
       </ngssm-regex>
 
