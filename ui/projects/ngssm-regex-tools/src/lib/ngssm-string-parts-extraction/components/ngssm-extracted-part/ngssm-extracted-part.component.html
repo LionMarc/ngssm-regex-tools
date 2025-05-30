@@ -19,7 +19,7 @@
     <mat-label>Format</mat-label>
     <input type="text" matInput [formControl]="formatControl" [matAutocomplete]="auto" id="formatInput" />
     <mat-autocomplete #auto="matAutocomplete" id="formatAutocomplete">
-      @for (format of filteredFormats$ | async; track format) {
+      @for (format of filteredFormats(); track format) {
         <mat-option [value]="format">
           {{ format }}
         </mat-option>

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 
-import { ConsoleAppender, NgSsmComponent, Store } from 'ngssm-store';
+import { ConsoleAppender } from 'ngssm-store';
 import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExtractor } from 'ngssm-regex-tools';
 
 @Component({
@@ -27,40 +27,30 @@ import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExt
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent extends NgSsmComponent {
-  private readonly _regexRequired$ = new BehaviorSubject<boolean>(false);
-  private readonly _regexValue = new BehaviorSubject<string | null | undefined>('^Test$**');
-
+export class AppComponent {
+  private readonly consoleAppender = inject(ConsoleAppender);
+  
+  public readonly regexRequired = signal<boolean>(false);
+  public readonly regexValue = signal<string | null | undefined>('^Test$**');
   public readonly extractorControl = new FormControl<StringPartsExtractor | undefined>(undefined, Validators.required);
-
   public readonly regexControl = new FormControl<string | undefined>(undefined);
 
-  constructor(store: Store, consoleAppender: ConsoleAppender) {
-    super(store);
-    consoleAppender.start();
+  constructor() {
+    this.consoleAppender.start();
 
     this.extractorControl.valueChanges.subscribe((v) => {
       console.log('AppComponent - new extractor', v);
     });
 
-    this.regexControl.valueChanges.pipe(takeUntil(this.unsubscribeAll$)).subscribe((v) => {
+    this.regexControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((v) => {
       console.log('regexControl.valueChanges', v);
-      setTimeout(() => this._regexValue.next(v));
+      setTimeout(() => this.regexValue.set(v));
     });
 
-    // this._regexValue.pipe(takeUntil(this.unsubscribeAll$)).subscribe((v) => {
-    //   console.log('state', v);
-    //   this.regexControl.reset(v, { emitEvent: false });
-    // });
-
     setTimeout(() => {
-      console.log('SETTING VALUE', this._regexValue.getValue());
-      this.regexControl.setValue(this._regexValue.getValue(), { emitEvent: false });
+      console.log('SETTING VALUE', this.regexValue());
+      this.regexControl.setValue(this.regexValue(), { emitEvent: false });
     }, 5000);
-  }
-
-  public get regexRequired$(): Observable<boolean> {
-    return this._regexRequired$.asObservable();
   }
 
   public setRegexControlDisabled(event: MatCheckboxChange): void {
@@ -72,6 +62,6 @@ export class AppComponent extends NgSsmComponent {
   }
 
   public setRegexControlRequired(event: MatCheckboxChange): void {
-    this._regexRequired$.next(event.checked);
+    this.regexRequired.set(event.checked);
   }
 }

@@ -1,16 +1,18 @@
-import { Component, ChangeDetectionStrategy, Input, Inject, Optional } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, effect, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { BehaviorSubject, Observable, startWith, Subscription, takeUntil } from 'rxjs';
+import { startWith } from 'rxjs';
 
-import { NgSsmComponent, Store } from 'ngssm-store';
+import { createSignal, Store } from 'ngssm-store';
 
 import { selectNgssmStringPartsExtractionState } from '../../state';
 import {
+  ExtractedPart,
   ExtractedPartType,
   getDefaultNgssmRegexToolsDateFormats,
   getExtractedPartTypes,
@@ -25,14 +27,15 @@ import { UpdateExtractedPartAction } from '../../actions';
   styleUrls: ['./ngssm-extracted-part.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgssmExtractedPartComponent extends NgSsmComponent {
-  private readonly _filteredFormats$ = new BehaviorSubject<string[]>([]);
+export class NgssmExtractedPartComponent {
+  private readonly store = inject(Store);
+  private readonly customDateFormats: string[] | null = inject(NGSSM_REGEX_TOOLS_DATE_FORMATS, { optional: true });
 
-  private readonly dateFormats: string[];
+  private readonly parts = createSignal((state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.parts);
 
-  private subscription: Subscription | undefined;
-  private _partName = '';
+  public readonly partName = input<string>('');
 
+  public readonly filteredFormats = signal<string[]>([]);
   public readonly nameControl = new FormControl<string>('');
   public readonly extractedPartTypes = getExtractedPartTypes();
   public readonly extractedPartType = ExtractedPartType;
@@ -45,16 +48,13 @@ export class NgssmExtractedPartComponent extends NgSsmComponent {
     format: this.formatControl
   });
 
-  constructor(store: Store, @Inject(NGSSM_REGEX_TOOLS_DATE_FORMATS) @Optional() customDateFormats: string[]) {
-    super(store);
-
-    this.dateFormats = customDateFormats ?? getDefaultNgssmRegexToolsDateFormats();
-
-    this.formatControl.valueChanges.pipe(startWith(''), takeUntil(this.unsubscribeAll$)).subscribe((value) => {
-      this._filteredFormats$.next(this.dateFormats.filter((f) => f.startsWith(value ?? '')));
+  constructor() {
+    const dateFormats = this.customDateFormats ?? getDefaultNgssmRegexToolsDateFormats();
+    this.formatControl.valueChanges.pipe(startWith(''), takeUntilDestroyed()).subscribe((value) => {
+      this.filteredFormats.set(dateFormats.filter((f) => f.startsWith(value ?? '')));
     });
 
-    this.typeControl.valueChanges.pipe(takeUntil(this.unsubscribeAll$)).subscribe((type) => {
+    this.typeControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((type) => {
       if (type === ExtractedPartType.date) {
         this.formatControl.setValidators(Validators.required);
       } else {
@@ -65,28 +65,15 @@ export class NgssmExtractedPartComponent extends NgSsmComponent {
     });
 
     this.formGroup.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll$))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .subscribe((value) => this.dispatchAction(new UpdateExtractedPartAction(value as any)));
-  }
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => this.store.dispatchAction(new UpdateExtractedPartAction(value as unknown as ExtractedPart)));
 
-  @Input() public set partName(value: string) {
-    this._partName = value;
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = undefined;
-    }
-
-    this.subscription = this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.parts).subscribe((values) => {
-      const part = values.find((v) => v.name === this._partName);
+    effect(() => {
+      const name = this.partName();
+      const part = this.parts().find((v) => v.name === name);
       if (part) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.formGroup.setValue(part as any, { emitEvent: false });
+        this.formGroup.setValue(part, { emitEvent: false });
       }
     });
-  }
-
-  public get filteredFormats$(): Observable<string[]> {
-    return this._filteredFormats$.asObservable();
   }
 }

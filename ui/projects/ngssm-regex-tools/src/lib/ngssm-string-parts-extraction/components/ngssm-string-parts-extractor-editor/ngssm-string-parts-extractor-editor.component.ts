@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, Inject, Optional } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, inject, signal, effect } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -6,9 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
-import { BehaviorSubject, combineLatest, debounceTime, Observable, take, takeUntil } from 'rxjs';
+import { debounceTime } from 'rxjs';
 
-import { NgSsmComponent, Store } from 'ngssm-store';
+import { createSignal, Store } from 'ngssm-store';
 
 import { selectNgssmStringPartsExtractionState } from '../../state';
 import { NgssmStringPartsExtractionActionType, UpdateExpressionAction, UpdateTestingStringAction } from '../../actions';
@@ -33,83 +34,76 @@ import { NGSSM_REGEX_TOOLS_CONFIG, NgssmRegexToolsConfig, getDefaultNgssmRegexTo
   styleUrls: ['./ngssm-string-parts-extractor-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgssmStringPartsExtractorEditorComponent extends NgSsmComponent implements AfterViewInit {
-  private readonly _canSubmit$ = new BehaviorSubject<boolean>(false);
-  private readonly _extractedPartNames$ = new BehaviorSubject<string[]>([]);
-  private readonly _isValid$ = new BehaviorSubject<boolean | undefined>(undefined);
-  private readonly regexConfig: NgssmRegexToolsConfig;
+export class NgssmStringPartsExtractorEditorComponent implements AfterViewInit {
+  private readonly store = inject(Store);
+  private readonly config: NgssmRegexToolsConfig | null = inject(NGSSM_REGEX_TOOLS_CONFIG, { optional: true });
+
+  private readonly parts = createSignal((state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.parts);
+  private readonly testingString = createSignal(
+    (state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.testingString
+  );
+  private readonly expressionError = createSignal(
+    (state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.expressionError
+  );
+
+  public readonly canSubmit = createSignal<boolean>((state) => {
+    const validationResult = selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.validationResult;
+    const extractionResult = selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.extractionResult;
+    return validationResult.isValid && (!extractionResult || extractionResult.isValid);
+  });
+  public readonly extractedPartNames = signal<string[]>([]);
+  public readonly isValid = createSignal<boolean | undefined>(
+    (state) => selectNgssmStringPartsExtractionState(state).stringPartsExtractorEditor.extractionResult?.isValid
+  );
 
   public readonly expressionControl = new FormControl<string | undefined>(undefined);
   public readonly testingStringControl = new FormControl<string>('');
 
-  constructor(store: Store, @Inject(NGSSM_REGEX_TOOLS_CONFIG) @Optional() config?: NgssmRegexToolsConfig) {
-    super(store);
-
-    this.regexConfig = config ?? getDefaultNgssmRegexToolsConfig();
+  constructor() {
+    const regexConfig = this.config ?? getDefaultNgssmRegexToolsConfig();
 
     this.expressionControl.valueChanges
-      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntil(this.unsubscribeAll$))
-      .subscribe((value) => this.dispatchAction(new UpdateExpressionAction(value)));
+      .pipe(debounceTime(regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
+      .subscribe((value) => this.store.dispatchAction(new UpdateExpressionAction(value)));
 
-    combineLatest([
-      this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.validationResult),
-      this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.extractionResult)
-    ]).subscribe((v) => this._canSubmit$.next(v[0].isValid && (!v[1] || v[1].isValid)));
-
-    this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.parts).subscribe((values) => {
-      const names = values.map((v) => v.name);
-      const displayedNames = this._extractedPartNames$.getValue();
+    effect(() => {
+      const parts = this.parts();
+      const displayedNames = this.extractedPartNames();
+      const names = parts.map((v) => v.name);
       if (names.length !== displayedNames.length || names.findIndex((n) => !displayedNames.includes(n)) !== -1) {
-        this._extractedPartNames$.next(names);
+        this.extractedPartNames.set(names);
       }
     });
 
-    this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.testingString).subscribe((value) => {
-      this.testingStringControl.setValue(value, { emitEvent: false });
+    effect(() => {
+      const test = this.testingString();
+      this.testingStringControl.setValue(test, { emitEvent: false });
     });
 
     this.testingStringControl.valueChanges
-      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntil(this.unsubscribeAll$))
-      .subscribe((value) => this.dispatchAction(new UpdateTestingStringAction(value ?? '')));
+      .pipe(debounceTime(regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
+      .subscribe((value) => this.store.dispatchAction(new UpdateTestingStringAction(value ?? '')));
 
-    this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.extractionResult).subscribe((v) =>
-      this._isValid$.next(v?.isValid)
-    );
-  }
-
-  public get extractedPartNames$(): Observable<string[]> {
-    return this._extractedPartNames$.asObservable();
-  }
-
-  public get canSubmit$(): Observable<boolean> {
-    return this._canSubmit$.asObservable();
-  }
-
-  public get isValid$(): Observable<boolean | undefined> {
-    return this._isValid$.asObservable();
-  }
-
-  public ngAfterViewInit(): void {
-    this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.expression)
-      .pipe(take(1))
-      .subscribe((value) => {
-        this.expressionControl.setValue(value, { emitEvent: false });
-      });
-
-    this.watch((s) => selectNgssmStringPartsExtractionState(s).stringPartsExtractorEditor.expressionError).subscribe((value) => {
-      if (value) {
-        this.expressionControl.setErrors({ regex: value }, { emitEvent: false });
+    effect(() => {
+      const error = this.expressionError();
+      if (error) {
+        this.expressionControl.setErrors({ regex: error }, { emitEvent: false });
       } else {
         this.expressionControl.setErrors(null, { emitEvent: false });
       }
     });
   }
 
+  public ngAfterViewInit(): void {
+    const expression = selectNgssmStringPartsExtractionState(this.store.state()).stringPartsExtractorEditor.expression;
+    this.expressionControl.setValue(expression, { emitEvent: false });
+  }
+
   public close(): void {
-    this.dispatchActionType(NgssmStringPartsExtractionActionType.closeStringPartsExtractorEditor);
+    this.store.dispatchActionType(NgssmStringPartsExtractionActionType.closeStringPartsExtractorEditor);
   }
 
   public submit(): void {
-    this.dispatchActionType(NgssmStringPartsExtractionActionType.submitStringPartsExtractor);
+    this.store.dispatchActionType(NgssmStringPartsExtractionActionType.submitStringPartsExtractor);
   }
 }
