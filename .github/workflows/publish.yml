@@ -37,13 +37,13 @@ jobs:
     needs: call_shared_build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: ngssm-regex-tools
           path: ./angular-packages
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           registry-url: 'https://registry.npmjs.org'
       - run: cd ./angular-packages && npm publish *.tgz
         shell: bash
