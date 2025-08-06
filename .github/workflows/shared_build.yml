@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     - name: Install wasm tools
       run: dotnet workload install wasm-tools
     - name: Restore dependencies
@@ -38,7 +38,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: smusdi-wasm
-        path: src/Smusdi.Wasm/bin/Release/net8.0/browser-wasm/AppBundle
+        path: src/Smusdi.Wasm/bin/Release/net9.0/browser-wasm/AppBundle
         retention-days: 2
   
   build_angular:
