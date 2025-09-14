@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { Effect, Store, State, Action } from 'ngssm-store';
 
@@ -8,13 +8,13 @@ import { selectNgssmStringPartsExtractionState } from '../state';
 
 @Injectable()
 export class StringPartsExtractionEffect implements Effect {
+  private readonly regexToolsService = inject(RegexToolsService);
+
   public readonly processedActions: string[] = [
     NgssmStringPartsExtractionActionType.updateTestingString,
     NgssmStringPartsExtractionActionType.updateExpression,
     NgssmStringPartsExtractionActionType.updateExtractedPart
   ];
-
-  constructor(private regexToolsService: RegexToolsService) {}
 
   public processAction(store: Store, state: State, action: Action): void {
     switch (action.type) {

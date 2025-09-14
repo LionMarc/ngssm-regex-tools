@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { Reducer, State, Action } from 'ngssm-store';
 
@@ -14,14 +14,14 @@ import { selectNgssmStringPartsExtractionState, updateNgssmStringPartsExtraction
 
 @Injectable()
 export class StringPartsExtractorEditorReducer implements Reducer {
+  private readonly regexToolsService = inject(RegexToolsService);
+
   public readonly processedActions: string[] = [
     NgssmStringPartsExtractionActionType.editStringPartsExtractor,
     NgssmStringPartsExtractionActionType.updateExpression,
     NgssmStringPartsExtractionActionType.updateExtractedPart,
     NgssmStringPartsExtractionActionType.submitStringPartsExtractor
   ];
-
-  constructor(private regexToolsService: RegexToolsService) {}
 
   public updateState(state: State, action: Action): State {
     let updatedState = state;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Logger } from 'ngssm-store';
 
 import { RegexValidationResult, StringPartsExtractionResult, StringPartsExtractor, StringPartsExtractorValidationResult } from '../model';
@@ -15,7 +15,7 @@ interface RegexToolsApi {
   providedIn: 'root'
 })
 export class RegexToolsService {
-  constructor(private logger: Logger) {}
+  private readonly logger = inject(Logger);
 
   public validateStringPartsExtractorExpression(extractorExpression: string): StringPartsExtractorValidationResult {
     const validationResult: string | undefined = this.getRegexToolsApi()?.ValidateStringPartsExtractor(
