@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, signal, effect, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { startWith } from 'rxjs';
 
 import { createSignal, Store } from 'ngssm-store';
@@ -22,7 +21,7 @@ import { UpdateExtractedPartAction } from '../../actions';
 
 @Component({
   selector: 'ngssm-extracted-part',
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule],
+  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption, MatAutocomplete, MatAutocompleteTrigger],
   templateUrl: './ngssm-extracted-part.component.html',
   styleUrls: ['./ngssm-extracted-part.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,4 +1,4 @@
-<mat-form-field class="ngssm-regex-control" id="expressionControl" [ngClass]="{ 'ngssm-regex-open': testingControlOpen() }">
+<mat-form-field class="ngssm-regex-control" id="expressionControl" [class.ngssm-regex-open]="testingControlOpen()">
   <mat-label>
     <ng-content></ng-content>
   </mat-label>
@@ -14,8 +14,7 @@
     [matTooltip]="
       testingControlOpen() === false ? 'Open panel to enter a string to be used to check the regular expression.' : 'Close panel'
     ">
-    <mat-icon class="fa-solid" [ngClass]="{ 'fa-angles-up': testingControlOpen(), 'fa-angles-down': testingControlOpen() === false }">
-    </mat-icon>
+    <mat-icon class="fa-solid" [class.fa-angles-up]="testingControlOpen()" [class.fa-angles-down]="!testingControlOpen()"></mat-icon>
   </button>
   @if (valueControl.errors?.['regex']; as error) {
     <mat-error> error </mat-error>
@@ -33,7 +32,10 @@
         <mat-icon
           matSuffix
           class="fa-solid"
-          [ngClass]="{ 'fa-check ngssm-success': isMatch(), 'fa-xmark ngssm-error': isMatch() === false }">
+          [class.fa-check]="isMatch()"
+          [class.ngssm-success]="isMatch()"
+          [class.fa-xmark]="!isMatch()"
+          [class.ngssm-error]="!isMatch()">
         </mat-icon>
       </mat-form-field>
     </div>

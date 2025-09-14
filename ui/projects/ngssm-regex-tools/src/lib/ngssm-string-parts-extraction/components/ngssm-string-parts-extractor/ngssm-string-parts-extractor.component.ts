@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject, effect, input, booleanAttribute, signal, computed, untracked } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { noop, Subject } from 'rxjs';
@@ -12,7 +11,7 @@ import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
   selector: 'ngssm-string-parts-extractor',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './ngssm-string-parts-extractor.component.html',
   styleUrls: ['./ngssm-string-parts-extractor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
