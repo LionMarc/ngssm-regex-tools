@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { Effect, Store, State, Action } from 'ngssm-store';
@@ -8,6 +8,8 @@ import { NgssmStringPartsExtractorEditorComponent } from '../components';
 
 @Injectable()
 export class StringPartsExtractorEditorEffect implements Effect {
+  private readonly matDialog = inject(MatDialog);
+
   private dialog: MatDialogRef<NgssmStringPartsExtractorEditorComponent> | undefined;
 
   public readonly processedActions: string[] = [
@@ -15,8 +17,6 @@ export class StringPartsExtractorEditorEffect implements Effect {
     NgssmStringPartsExtractionActionType.closeStringPartsExtractorEditor,
     NgssmStringPartsExtractionActionType.submitStringPartsExtractor
   ];
-
-  constructor(private matDialog: MatDialog) {}
 
   public processAction(store: Store, state: State, action: Action): void {
     switch (action.type) {

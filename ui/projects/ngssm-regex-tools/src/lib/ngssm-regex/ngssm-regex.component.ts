@@ -1,13 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ChangeDetectorRef,
-  inject,
-  input,
-  booleanAttribute,
-  signal
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef, inject, input, booleanAttribute, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import {

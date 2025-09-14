@@ -29,7 +29,7 @@ import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExt
 })
 export class AppComponent {
   private readonly consoleAppender = inject(ConsoleAppender);
-  
+
   public readonly regexRequired = signal<boolean>(false);
   public readonly regexValue = signal<string | null | undefined>('^Test$**');
   public readonly extractorControl = new FormControl<StringPartsExtractor | undefined>(undefined, Validators.required);
