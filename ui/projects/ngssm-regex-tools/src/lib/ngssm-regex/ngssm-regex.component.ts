@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef, inject, input, booleanAttribute, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -11,12 +10,12 @@ import {
   ValidationErrors,
   Validator
 } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { ConnectionPositionPair, OverlayModule } from '@angular/cdk/overlay';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectionPositionPair } from '@angular/cdk/overlay';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { debounceTime } from 'rxjs';
 
 import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
@@ -29,14 +28,17 @@ export const noop = () => {
 @Component({
   selector: 'ngssm-regex',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    OverlayModule
+    MatFormField,
+    MatLabel,
+    MatError,
+    MatSuffix,
+    MatInput,
+    MatIcon,
+    MatIconButton,
+    MatTooltip,
+    CdkConnectedOverlay,
+    CdkOverlayOrigin
   ],
   templateUrl: './ngssm-regex.component.html',
   styleUrls: ['./ngssm-regex.component.scss'],

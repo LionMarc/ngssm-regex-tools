@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, effect, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 import { createSignal } from 'ngssm-store';
 
@@ -9,7 +9,7 @@ import { selectNgssmStringPartsExtractionState } from '../../state';
 
 @Component({
   selector: 'ngssm-extracted-part-result',
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatFormField, MatLabel, MatInput],
   templateUrl: './ngssm-extracted-part-result.component.html',
   styleUrls: ['./ngssm-extracted-part-result.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
