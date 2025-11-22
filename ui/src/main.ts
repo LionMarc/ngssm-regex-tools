@@ -1,4 +1,4 @@
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
@@ -11,7 +11,7 @@ import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom([BrowserModule, MatDialogModule]),
+    provideZoneChangeDetection(),importProvidersFrom([BrowserModule, MatDialogModule]),
     provideAnimations(),
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
