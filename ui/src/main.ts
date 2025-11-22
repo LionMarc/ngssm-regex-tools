@@ -11,7 +11,8 @@ import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),importProvidersFrom([BrowserModule, MatDialogModule]),
+    provideZoneChangeDetection(),
+    importProvidersFrom([BrowserModule, MatDialogModule]),
     provideAnimations(),
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
