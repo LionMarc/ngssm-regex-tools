@@ -21,11 +21,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Create global.json to pin SDK
+      run: |
+        echo '{ "sdk": { "version": "9.0.100" } }' > global.json
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 9.0.100
     - name: Install wasm tools
+      # rely on global.json to select SDK (omit --sdk-version)
       run: dotnet workload install wasm-tools
     - name: Restore dependencies
       run: dotnet restore

@@ -1,5 +1,5 @@
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { CommonModule } from '@angular/common';
+
 import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -14,7 +14,7 @@ import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
 
 @Component({
   selector: 'ngssm-testing',
-  imports: [CommonModule, ReactiveFormsModule, NgssmRegexComponent],
+  imports: [ReactiveFormsModule, NgssmRegexComponent],
   template: ` <ngssm-regex [formControl]="regexControl" [required]="regexRequired()"> Enter a valid regular expression </ngssm-regex> `,
   styles: []
 })
