@@ -24,9 +24,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        # Pin to an exact SDK patch so workload installation targets 9.0.x precisely
+        dotnet-version: 9.0.100
     - name: Install wasm tools
-      run: dotnet workload install wasm-tools
+      # Force installation for the pinned SDK by supplying --sdk-version
+      run: dotnet workload install wasm-tools --sdk-version 9.0.100
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
