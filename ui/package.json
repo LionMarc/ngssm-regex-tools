@@ -52,7 +52,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.2.0",
     "karma-junit-reporter": "^2.0.1",
-    "ng-packagr": "21.2.2",
+    "ng-packagr": "21.2.3",
     "ngssm-schematics": "21.1.5",
     "prettier": "^3.8.3",
     "prettier-eslint": "^16.3.2",
