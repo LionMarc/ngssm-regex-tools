@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,12 +8,14 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { ConsoleAppender } from 'ngssm-store';
 import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExtractor } from 'ngssm-regex-tools';
+import { FormControl, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ngssm-root',
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatToolbarModule,
     MatFormFieldModule,
     MatCardModule,
@@ -28,12 +28,13 @@ import { NgssmRegexComponent, NgssmStringPartsExtractorComponent, StringPartsExt
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  private readonly consoleAppender = inject(ConsoleAppender);
+  protected readonly regexRequired = signal<boolean>(false);
+  protected readonly regexPattern = signal<string | null | undefined>(undefined);
+  protected readonly regexDisabled = signal<boolean>(false);
+  protected readonly extractorControl = new FormControl<StringPartsExtractor | undefined>(undefined, Validators.required);
+  protected readonly isRegexValid = signal<boolean>(false);
 
-  public readonly regexRequired = signal<boolean>(false);
-  public readonly regexValue = signal<string | null | undefined>('^Test$**');
-  public readonly extractorControl = new FormControl<StringPartsExtractor | undefined>(undefined, Validators.required);
-  public readonly regexControl = new FormControl<string | undefined>(undefined);
+  private readonly consoleAppender = inject(ConsoleAppender);
 
   constructor() {
     this.consoleAppender.start();
@@ -42,26 +43,17 @@ export class AppComponent {
       console.log('AppComponent - new extractor', v);
     });
 
-    this.regexControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((v) => {
-      console.log('regexControl.valueChanges', v);
-      setTimeout(() => this.regexValue.set(v));
-    });
-
     setTimeout(() => {
-      console.log('SETTING VALUE', this.regexValue());
-      this.regexControl.setValue(this.regexValue(), { emitEvent: false });
+      this.regexPattern.set('^Test$**');
+      console.log('SETTING VALUE', this.regexPattern());
     }, 5000);
   }
 
-  public setRegexControlDisabled(event: MatCheckboxChange): void {
-    if (event.checked) {
-      this.regexControl.disable();
-    } else {
-      this.regexControl.enable();
-    }
+  public setRegexDisabled(event: MatCheckboxChange): void {
+    this.regexDisabled.set(event.checked);
   }
 
-  public setRegexControlRequired(event: MatCheckboxChange): void {
+  public setRegexRequired(event: MatCheckboxChange): void {
     this.regexRequired.set(event.checked);
   }
 }
