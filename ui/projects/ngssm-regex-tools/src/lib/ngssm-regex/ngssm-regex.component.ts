@@ -1,15 +1,17 @@
-import { Component, ChangeDetectionStrategy, ElementRef, ChangeDetectorRef, inject, input, booleanAttribute, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormControl,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validator
-} from '@angular/forms';
+  Component,
+  ChangeDetectionStrategy,
+  ElementRef,
+  inject,
+  input,
+  booleanAttribute,
+  model,
+  signal,
+  effect,
+  output
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
@@ -21,14 +23,11 @@ import { debounceTime } from 'rxjs';
 import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
 import { NGSSM_REGEX_TOOLS_CONFIG, NgssmRegexToolsConfig, getDefaultNgssmRegexToolsConfig } from '../ngssm-regex-tools-tools-config';
 
-export const noop = () => {
-  // Do nothing
-};
-
 @Component({
   selector: 'ngssm-regex',
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     MatFormField,
     MatLabel,
     MatError,
@@ -42,42 +41,26 @@ export const noop = () => {
   ],
   templateUrl: './ngssm-regex.component.html',
   styleUrls: ['./ngssm-regex.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: NgssmRegexComponent
-    },
-    {
-      provide: NG_VALIDATORS,
-      multi: true,
-      useExisting: NgssmRegexComponent
-    }
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgssmRegexComponent implements ControlValueAccessor, Validator {
-  private readonly regexToolsService = inject(RegexToolsService);
-  public readonly elementRef = inject(ElementRef);
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
-  private readonly config: NgssmRegexToolsConfig | null = inject(NGSSM_REGEX_TOOLS_CONFIG, { optional: true });
-
-  private readonly regexConfig: NgssmRegexToolsConfig;
-
-  private onChangeCallback: (_: string | null | undefined) => void = noop;
-  private onTouchedCallback: (_: string | null | undefined) => void = noop;
-  private onValidationChange: () => void = noop;
-  private lastWrite: string | null = null;
-
+export class NgssmRegexComponent {
+  public readonly pattern = model<string | null | undefined>(null);
   public readonly required = input<boolean, unknown>(false, {
     transform: booleanAttribute
   });
-  public readonly testingControlOpen = signal<boolean>(false);
-  public readonly isMatch = signal<boolean | null>(null);
-  public readonly valueControl = new FormControl<string | null | undefined>(null);
-  public readonly testingStringControl = new FormControl<string>('');
+  public readonly label = input<string>('Pattern');
+  public readonly isDisabled = input<boolean, unknown>(false, {
+    transform: booleanAttribute
+  });
+  public readonly isValidChanged = output<boolean>();
 
-  public readonly overlayPositions: ConnectionPositionPair[] = [
+  protected readonly elementRef = inject(ElementRef);
+  protected readonly patternControl = new FormControl<string | undefined>(undefined);
+  protected readonly testingControlOpen = signal<boolean>(false);
+  protected readonly isMatch = signal<boolean | null>(null);
+  protected readonly validationError = signal<string | null>(null);
+  protected readonly testingStringControl = new FormControl<string>('');
+  protected readonly overlayPositions: ConnectionPositionPair[] = [
     new ConnectionPositionPair(
       {
         originX: 'end',
@@ -92,95 +75,87 @@ export class NgssmRegexComponent implements ControlValueAccessor, Validator {
     )
   ];
 
+  private readonly regexToolsService = inject(RegexToolsService);
+  private readonly config: NgssmRegexToolsConfig | null = inject(NGSSM_REGEX_TOOLS_CONFIG, { optional: true });
+  private readonly regexConfig: NgssmRegexToolsConfig;
+  private readonly testString = signal<string>('');
+
   constructor() {
     this.regexConfig = this.config ?? getDefaultNgssmRegexToolsConfig();
 
-    this.valueControl.valueChanges
-      .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
-      .subscribe((value) => {
-        if (value !== this.lastWrite) {
-          this.onTouchedCallback(value);
-          this.onChangeCallback(value);
+    // Handle disabled state
+    effect(() => {
+      if (this.isDisabled()) {
+        if (this.testingControlOpen()) {
+          this.toggleTestingControlVisibility();
         }
 
-        this.changeDetectorRef.markForCheck();
-        this.lastWrite = null;
-      });
+        this.patternControl.disable();
+      } else {
+        this.patternControl.enable();
+      }
+    });
 
+    effect(() => {
+      const value = this.pattern();
+      this.patternControl.setValue(value, { emitEvent: false });
+    });
+
+    effect(() => {
+      const error = this.validationError();
+      if (error) {
+        this.patternControl.setErrors({ regex: error });
+      } else {
+        this.patternControl.setErrors(null);
+      }
+    });
+
+    this.patternControl.valueChanges.subscribe((v) => this.pattern.set(v));
+
+    // Validate pattern and test string
+    effect(() => {
+      const patternValue = this.pattern();
+      const testString = this.testString();
+
+      this.isMatch.set(null);
+      this.validationError.set(null);
+
+      if (patternValue) {
+        const result = this.regexToolsService.validateRegex(patternValue);
+        if (!result.isValid) {
+          this.validationError.set(result.error ?? 'Invalid regex');
+          this.isValidChanged.emit(false);
+          return;
+        }
+
+        // Check test string only if testing control is open
+        if (this.testingControlOpen() && testString && testString.length > 0) {
+          const matchResult = this.regexToolsService.isMatch(patternValue, testString);
+          this.isMatch.set(matchResult);
+          if (!matchResult) {
+            this.validationError.set('Test string does not match');
+            this.isValidChanged.emit(false);
+            return;
+          }
+        }
+      } else if (this.required()) {
+        this.validationError.set('Value is required');
+        this.isValidChanged.emit(false);
+        return;
+      }
+
+      this.isValidChanged.emit(true);
+    });
+
+    // Debounce pattern updates
     this.testingStringControl.valueChanges
       .pipe(debounceTime(this.regexConfig.regexControlDebounceTimeInMs), takeUntilDestroyed())
-      .subscribe(() => this.onValidationChange());
-  }
-
-  public writeValue(obj: string | null | undefined): void {
-    if (this.valueControl.value !== obj) {
-      this.lastWrite = obj ?? null;
-      this.valueControl.setValue(obj, { emitEvent: false });
-      this.changeDetectorRef.markForCheck();
-    }
-  }
-
-  public registerOnChange(fn: (_: string | null | undefined) => void): void {
-    this.onChangeCallback = fn;
-  }
-
-  public registerOnTouched(fn: (_: string | null | undefined) => void): void {
-    this.onTouchedCallback = fn;
-  }
-
-  public setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.valueControl.disable();
-      if (this.testingControlOpen()) {
-        this.toggleTestingControlVisibility();
-      }
-    } else {
-      this.valueControl.enable();
-    }
-  }
-
-  public validate(control: AbstractControl<string | null | undefined, string | null | undefined>): ValidationErrors | null {
-    let error: ValidationErrors | null = null;
-    this.isMatch.set(null);
-
-    const value = control.value;
-    if (value) {
-      const result = this.regexToolsService.validateRegex(value);
-      if (!result.isValid) {
-        error = {
-          regex: result.error
-        };
-      }
-
-      // check test string only if testing control is open
-      const testString = this.testingStringControl.value;
-      if (!error && this.testingControlOpen() && testString && testString.length > 0) {
-        const isMatch = this.regexToolsService.isMatch(value, testString);
-        if (!isMatch) {
-          error = {
-            test: 'Test string does not match'
-          };
-        }
-
-        this.isMatch.set(isMatch);
-      }
-    } else if (this.required()) {
-      error = {
-        required: 'Value is required'
-      };
-    }
-
-    this.valueControl.setErrors(error);
-
-    return error;
-  }
-
-  public registerOnValidatorChange?(fn: () => void): void {
-    this.onValidationChange = fn;
+      .subscribe((v) => {
+        this.testString.set(v ?? '');
+      });
   }
 
   public toggleTestingControlVisibility(): void {
     this.testingControlOpen.update((v) => !v);
-    this.onValidationChange();
   }
 }

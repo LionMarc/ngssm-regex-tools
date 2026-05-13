@@ -1,13 +1,20 @@
-<mat-form-field class="ngssm-regex-control" id="expressionControl" [class.ngssm-regex-open]="testingControlOpen()">
+<mat-form-field
+  class="ngssm-regex-control"
+  id="expressionControl"
+  [class.ngssm-regex-open]="testingControlOpen()">
   <mat-label>
-    <ng-content></ng-content>
+    {{ label() }}
   </mat-label>
-  <input matInput [formControl]="valueControl" [required]="required()" #element />
+  <input
+    matInput
+    [formControl]="patternControl"
+    [required]="required()"
+    #element />
   <button
     matSuffix
     mat-icon-button
     (click)="$event.stopPropagation(); toggleTestingControlVisibility()"
-    [disabled]="valueControl.disabled"
+    [disabled]="isDisabled()"
     id="toggleButton"
     cdkOverlayOrigin
     #trigger="cdkOverlayOrigin"
@@ -16,8 +23,8 @@
     ">
     <mat-icon class="fa-solid" [class.fa-angles-up]="testingControlOpen()" [class.fa-angles-down]="!testingControlOpen()"></mat-icon>
   </button>
-  @if (valueControl.errors?.['regex']; as error) {
-    <mat-error> error </mat-error>
+  @if (validationError(); as error) {
+    <mat-error> {{ error }} </mat-error>
   }
 
   <ng-template
