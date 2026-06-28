@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgssmStringPartsExtractorEditorComponent } from './ngssm-string-parts-extractor-editor.component';
 
@@ -9,7 +8,7 @@ describe('NgssmStringPartsExtractorEditorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, NgssmStringPartsExtractorEditorComponent]
+      imports: [NgssmStringPartsExtractorEditorComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(NgssmStringPartsExtractorEditorComponent);

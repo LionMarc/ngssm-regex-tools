@@ -20,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Create global.json to pin SDK
       run: |
         echo '{ "sdk": { "version": "9.0.100" } }' > global.json
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9.0.100
     - name: Install wasm tools
@@ -39,7 +39,7 @@ jobs:
       run: rm -rf src/Smusdi.Wasm/bin && rm -rf src/Smusdi.Wasm/obj
     - name: Building wasm
       run: dotnet publish src/Smusdi.Wasm/Smusdi.Wasm.csproj --configuration Release -p:Version=${{ inputs.angular_package_version }}
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: smusdi-wasm
         path: src/Smusdi.Wasm/bin/Release/net9.0/browser-wasm/AppBundle
@@ -52,15 +52,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
+    - uses: actions/checkout@v7
+    - uses: actions/download-artifact@v8
       with:
         name: smusdi-wasm
         path: ui/projects/ngssm-regex-tools/assets
     - run: ls -lrt ui/projects/ngssm-regex-tools/assets
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
-        node-version: '22.x'
+        node-version: '24.x'
         cache: 'npm'
         cache-dependency-path: 'ui/package-lock.json'
     - run: cd ui && npm ci
@@ -72,7 +72,7 @@ jobs:
         cd ui/dist/ngssm-regex-tools
         npm version ${{ inputs.angular_package_version }}
         npm pack
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: ngssm-regex-tools
         path: ui/dist/ngssm-regex-tools/ngssm-regex-tools-${{ inputs.angular_package_version }}.tgz
@@ -91,7 +91,7 @@ jobs:
         thresholds: '60 80'
     - run: mv code-coverage-results.md angular-code-coverage-results.md
     - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3.0.3
       if: github.event_name == 'pull_request'
       with:
         header: angular

@@ -2,7 +2,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
@@ -21,7 +20,7 @@
     "useDefineForClassFields": false,
     "paths": {
       "ngssm-regex-tools": [
-        "dist/ngssm-regex-tools"
+        "./dist/ngssm-regex-tools"
       ]
     }
   },
@@ -30,5 +29,20 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngssm-regex-tools/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ngssm-regex-tools/tsconfig.spec.json"
+    }
+  ]
 }
