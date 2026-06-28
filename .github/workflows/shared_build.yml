@@ -25,7 +25,7 @@ jobs:
       run: |
         echo '{ "sdk": { "version": "9.0.100" } }' > global.json
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9.0.100
     - name: Install wasm tools
@@ -39,7 +39,7 @@ jobs:
       run: rm -rf src/Smusdi.Wasm/bin && rm -rf src/Smusdi.Wasm/obj
     - name: Building wasm
       run: dotnet publish src/Smusdi.Wasm/Smusdi.Wasm.csproj --configuration Release -p:Version=${{ inputs.angular_package_version }}
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: smusdi-wasm
         path: src/Smusdi.Wasm/bin/Release/net9.0/browser-wasm/AppBundle
@@ -53,7 +53,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: smusdi-wasm
         path: ui/projects/ngssm-regex-tools/assets
@@ -72,7 +72,7 @@ jobs:
         cd ui/dist/ngssm-regex-tools
         npm version ${{ inputs.angular_package_version }}
         npm pack
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: ngssm-regex-tools
         path: ui/dist/ngssm-regex-tools/ngssm-regex-tools-${{ inputs.angular_package_version }}.tgz
