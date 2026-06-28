@@ -1,6 +1,4 @@
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
@@ -16,7 +14,6 @@ import { RegexToolsService } from '../ngssm-string-parts-extraction/services';
   selector: 'ngssm-testing',
   imports: [ReactiveFormsModule, NgssmRegexComponent],
   template: ` <ngssm-regex [formControl]="regexControl" [required]="regexRequired()"> Enter a valid regular expression </ngssm-regex> `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: []
 })
 export class TestingComponent {
@@ -32,7 +29,7 @@ describe('NgssmRegexComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TestingComponent],
-      providers: [provideNoopAnimations()],
+      providers: [],
       teardown: { destroyAfterEach: false }
     }).compileComponents();
 
