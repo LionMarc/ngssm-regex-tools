@@ -58,7 +58,7 @@ jobs:
         name: smusdi-wasm
         path: ui/projects/ngssm-regex-tools/assets
     - run: ls -lrt ui/projects/ngssm-regex-tools/assets
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         node-version: '24.x'
         cache: 'npm'
