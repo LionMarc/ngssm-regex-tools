@@ -2,7 +2,6 @@ import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { NGSSM_REGEX_TOOLS_CONFIG, NGSSM_REGEX_TOOLS_DATE_FORMATS, provideNgssmStringPartsExtraction } from 'ngssm-regex-tools';
 import { useDefaultErrorStateMatcher } from 'ngssm-toolkit';
@@ -13,7 +12,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideZoneChangeDetection(),
     importProvidersFrom([BrowserModule, MatDialogModule]),
-    provideAnimations(),
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
       useValue: { position: { top: '40px' }, closeOnNavigation: false }

@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatInputHarness } from '@angular/material/input/testing';
@@ -26,7 +25,7 @@ describe('NgssmExtractedPartComponent', () => {
       });
 
       await TestBed.configureTestingModule({
-        imports: [NoopAnimationsModule, NgssmExtractedPartComponent],
+        imports: [NgssmExtractedPartComponent],
         providers: [{ provide: Store, useValue: store }],
         teardown: { destroyAfterEach: false }
       }).compileComponents();
@@ -46,7 +45,7 @@ describe('NgssmExtractedPartComponent', () => {
       });
 
       await TestBed.configureTestingModule({
-        imports: [NoopAnimationsModule, NgssmExtractedPartComponent],
+        imports: [NgssmExtractedPartComponent],
         providers: [
           { provide: Store, useValue: store },
           { provide: NGSSM_REGEX_TOOLS_DATE_FORMATS, useValue: customDateFormats }
