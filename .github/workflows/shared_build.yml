@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Create global.json to pin SDK
       run: |
         echo '{ "sdk": { "version": "9.0.100" } }' > global.json
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: actions/download-artifact@v4
       with:
         name: smusdi-wasm
@@ -60,7 +60,7 @@ jobs:
     - run: ls -lrt ui/projects/ngssm-regex-tools/assets
     - uses: actions/setup-node@v4
       with:
-        node-version: '22.x'
+        node-version: '24.x'
         cache: 'npm'
         cache-dependency-path: 'ui/package-lock.json'
     - run: cd ui && npm ci
@@ -91,7 +91,7 @@ jobs:
         thresholds: '60 80'
     - run: mv code-coverage-results.md angular-code-coverage-results.md
     - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3.0.3
       if: github.event_name == 'pull_request'
       with:
         header: angular
