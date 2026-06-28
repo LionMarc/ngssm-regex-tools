@@ -23,7 +23,7 @@
     "@angular/material": "22.0.2",
     "@angular/platform-browser": "22.0.4",
     "@angular/router": "22.0.4",
-    "@fortawesome/fontawesome-free": "7.2.0",
+    "@fortawesome/fontawesome-free": "7.3.0",
     "immutability-helper": "3.1.1",
     "luxon": "3.7.2",
     "ngssm-store": "22.0.0",
@@ -38,9 +38,9 @@
     "@angular/compiler-cli": "22.0.4",
     "@eslint/js": "10.0.1",
     "@types/jasmine": "6.0.0",
-    "@types/luxon": "3.7.1",
+    "@types/luxon": "3.7.2",
     "angular-eslint": "22.0.0",
-    "eslint": "10.5.0",
+    "eslint": "10.6.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.6",
     "istanbul-lib-instrument": "6.0.3",
@@ -53,9 +53,9 @@
     "karma-junit-reporter": "2.0.1",
     "ng-packagr": "22.0.0",
     "ngssm-schematics": "22.0.0",
-    "prettier": "3.8.4",
-    "prettier-eslint": "17.1.0",
+    "prettier": "3.9.1",
+    "prettier-eslint": "17.1.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.61.1"
+    "typescript-eslint": "8.62.0"
   }
 }
