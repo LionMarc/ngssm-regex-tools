@@ -53,7 +53,7 @@
     "karma-junit-reporter": "2.0.1",
     "ng-packagr": "22.0.0",
     "ngssm-schematics": "22.0.0",
-    "prettier": "3.9.1",
+    "prettier": "3.9.4",
     "prettier-eslint": "17.1.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.62.1"
